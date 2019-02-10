@@ -87,6 +87,7 @@ function lineParserHandler(str) {
     }
 
     if (  str.indexOf(g_dbgIndicator) == 0 ) {
+        console.log(str);
         return;
     }
 
@@ -106,7 +107,7 @@ function lineParserHandler(str) {
 
 
 function stringToPort(thisPort,str) {
-    console.log(str)
+    console.log("stringToPort > " + str)
     if ( thisPort ) {
         thisPort.write(str + '\n');
     }
@@ -266,7 +267,7 @@ if ( typeof uartsAll !== 'undefined' ) {  // use Serial Port class. Baud rate in
 //------------ ------------ ------------ ------------ ------------ ----------
 
 
-run_example_script(null,"fake");
+run_example_script(null,"test4");
 
 
 

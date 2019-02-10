@@ -152,17 +152,6 @@ void sensorReport(void) {
 
 //   -------- ------------   -------- ------------
 
-void itWorksLEDIndicator(bool cmd) {
-  if ( itWorksLED ) {
-    if ( cmd ) {
-      //digitalWrite(LEDTestPin, HIGH);       // sets the digital pin 7 on
-    } else {
-      //digitalWrite(LEDTestPin, LOW);       // sets the digital pin 7 off
-    }
-  } else {
-    //digitalWrite(LEDTestPin, LOW);       // sets the digital pin 7 off
-  }
-}
 
 //  writePump
 static bool gPumpDirection = false;  // state info
@@ -171,11 +160,8 @@ static uint8_t gPumpRate = 0;
 void writePump(bool pDirection, uint8_t rate) {
     gPumpDirection = pDirection;
     gPumpRate = rate;
-    Serial.print("BDG >= gPumpDirection >> ");
-    Serial.print(gPumpDirection);
-    Serial.print(" >> ");
-    Serial.print(rate);
 }
+
 
 // should be called in sequence
 void writePumpInvert() {
@@ -195,10 +181,6 @@ void writeLight(bool state, uint8_t intensity) {
     gLightState = state;
     gLightIntensity = intensity;
 //
-    Serial.print("BDG >= writeLight >> ");
-    Serial.print(gLightState);
-    Serial.print(" >> ");
-    Serial.print(gLightIntensity);
 }
 
 // should be called in sequence
@@ -256,10 +238,6 @@ void writeHeat(bool state, uint8_t intensity) {
     gHeatState = state;
     gHeatIntensity = intensity;
     //
-    Serial.print("BDG >= writeHeat >> ");
-    Serial.print(gHeatState);
-    Serial.print(" >> ");
-    Serial.print(gHeatIntensity);
 }
 
 // should be called in sequence
@@ -307,7 +285,7 @@ void printData(float OD,float temperature) {
 
     if ( gCheckLimits ) {
       printLimit(SENSOR_OD_,OD);
-      printLimit(SENSOR_TEMP_,temperature);
+      printLimit(SENSOR_Temperature_,temperature);
     }
 }
 
@@ -337,6 +315,8 @@ void sendAllStateInfo(void) {
   Serial.print(!(gHeatState));
   Serial.print(F(",Heater-level: "));
   Serial.print(gHeatIntensity);
+  Serial.println("");
+  
   
   //
 }
@@ -375,17 +355,40 @@ void initCustomAppPins(void) {
 
 void handleStateRequest(uint8_t psensor) {
  // ${TO DO}
+    Serial.print("DBG >= handleStateRequest >> ");
+    Serial.print(psensor);
+    Serial.println(" << ");
+
  if ( psensor == 0 )  {
     sendAllStateInfo();
   }
 }
 
 void handleLimit(uint8_t psensor,float pHIGH,float pLOW) {
+    Serial.print("DBG >= handleLimit >> ");
+    Serial.print(psensor);
+    Serial.print(" >> ");
+    Serial.print(pHIGH);
+    Serial.print(" >> ");
+    Serial.print(pLOW);
+    Serial.println(" << ");
+
  // ${TO DO}
  setLimitOnSensor(psensor,pHIGH,pLOW);
 }
 
 void appSetTime(uint16_t pminutes,uint8_t pday,uint8_t pmonth,uint8_t pyear) {
+
+    Serial.print("DBG >= appSetTime >> ");
+    Serial.print(pminutes);
+    Serial.print(" >> ");
+    Serial.print(pday);
+    Serial.print(" >> ");
+    Serial.print(pmonth);
+    Serial.print(" >> ");
+    Serial.print(pyear);
+    Serial.println(" << ");
+
  // ${TO DO}
   uint8_t theHour = hour_of(pminutes);
   uint8_t theMinutes = minutes_of(pminutes);
@@ -395,6 +398,14 @@ void appSetTime(uint16_t pminutes,uint8_t pday,uint8_t pmonth,uint8_t pyear) {
 }
 
 void handleReportCmd(bool pstate,uint16_t pinterval,uint8_t psensor) {
+    Serial.print("DBG >= handleReportCmd >> ");
+    Serial.print(pstate);
+    Serial.print(" >> ");
+    Serial.print(pinterval);
+    Serial.print(" >> ");
+    Serial.print(psensor);
+    Serial.println(" << ");
+
   gReporting = pstate;
   gTasker.cancel(sensorReport);
   gSampleInterval =  (unsigned int)(pinterval*1000.0);
@@ -404,7 +415,19 @@ void handleReportCmd(bool pstate,uint16_t pinterval,uint8_t psensor) {
 }
 
 
+
 void handleLedsCmd(bool pstate,uint8_t plevel,uint16_t pstart,uint16_t pstop) {
+
+    Serial.print("DBG >= handleLedsCmd >> ");
+    Serial.print(pstate);
+    Serial.print(" >> ");
+    Serial.print(plevel);
+    Serial.print(" >> ");
+    Serial.print(pstart);
+    Serial.print(" >> ");
+    Serial.print(pstop);
+    Serial.println(" << ");
+
  // ${TO DO}
   if ( pstart == pstop ) {
     writeLight(pstate,plevel);
@@ -435,6 +458,16 @@ void handleLedsCmd(bool pstate,uint8_t plevel,uint16_t pstart,uint16_t pstop) {
 
 void handlePumpCmd(bool pdirection,uint8_t plevel,uint16_t pstart,uint16_t pstop) {
  // ${TO DO}
+
+    Serial.print("DBG >= handlePumpCmd >> ");
+    Serial.print(pdirection);
+    Serial.print(" >> ");
+    Serial.print(plevel);
+    Serial.print(" >> ");
+    Serial.print(pstart);
+    Serial.print(" >> ");
+    Serial.print(pstop);
+    Serial.println(" << ");
  
    if ( pstart != pstop ) {
     if ( pstart == 0 ) {
@@ -464,7 +497,10 @@ void handleStepperCmd(bool pdirection,uint8_t plevel,uint16_t psteps) {
 void commandProcessor() {
 
   uint8_t cmdNum = cmdTable.cmdNumber();
-  
+
+  Serial.print("DBG >= commandProcessor >> ");
+  Serial.println(cmdNum);
+
   switch( cmdNum ) {
     case QUERY_STATE_: {
       handleStateRequest(cmdTable.unload_uint8(0));
@@ -541,12 +577,15 @@ void serialEvent() {
 void loop()
 {
 
-  if ( !cmdTable.error() ) {
-    Serial.print("ACK");
-    Serial.println(cmdTable.preamble());
-  } else {
-    Serial.print("ERR");
-    Serial.println(cmdTable.preamble());
+  if ( cmdTable.ready() ) {
+      commandProcessor();
+      if ( !cmdTable.error() ) {
+        Serial.print("ACK");
+        Serial.println(cmdTable.preamble());
+      } else {
+        Serial.print("ERR");
+        Serial.println(cmdTable.preamble());
+      }
   }
   
   gTasker.loop();

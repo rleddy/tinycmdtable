@@ -51,179 +51,179 @@ static inline void copy_upTo(char *src, char *end, char *dst) {
 
 
 class tinyCmdTable {
-	public:
-		tinyCmdTable(uint8_t linesize,uint8_t appMaxCmd) {
+public:
+	tinyCmdTable(uint8_t linesize,uint8_t appMaxCmd) {
+		//
+		// manage commands
+		_ready = false;
+		_errorSet = false;
+		//
+		_comma_count = 0;
+		//
+		memset(_values[0],0,MAX_VALUE_LEN);
+		memset(_values[1],0,MAX_VALUE_LEN);
+		memset(_values[2],0,MAX_VALUE_LEN);
+		memset(_values[3],0,MAX_VALUE_LEN);
+		//
+		_maxCMDs = min(appMaxCmd,MAX_CMDS);
+		_cnum = 0xFF;
+		
+		// read in cmd string
+		_linesize = min(MAX_CMD_LINE,linesize);
+		reset();
+	}
+	virtual ~tinyCmdTable() {}
+	
+	
+	uint8_t cmdNumber(void) {
+		return(_cnum);
+	}
+	
+	// ---- ---- ---- ---- ---- ---- ---- ---- ----
+	uint8_t unload_uint8(uint8_t paramNum) {
+		uint8_t ival;
+		if ( paramNum < MAX_CMD_PARAMETERS ) {
+			char * value = &(_values[paramNum][0]);
 			//
-			// manage commands
-			_ready = false;
-			_errorSet = false;
+			uint8_t ival = (uint8_t)atoi(value);
+			return(ival);
+		}
+		return(0);
+	}
+	
+	uint16_t unload_uint16(uint8_t paramNum) {
+		if ( paramNum < MAX_CMD_PARAMETERS ) {
+			char * value = &(_values[paramNum][0]);
+			uint16_t ival = (uint16_t)atoi(value);
+			return(ival);
+		}
+		return(0);
+	}
+	
+	uint32_t unload_uint32(uint8_t paramNum) {
+		if ( paramNum < MAX_CMD_PARAMETERS ) {
+			char * value = &(_values[paramNum][0]);
+			uint32_t ival = atol(value);
+			return(ival);
+		}
+		return(0);
+	}
+	
+	int8_t unload_int8(uint8_t paramNum) {
+		uint8_t ival;
+		if ( paramNum < MAX_CMD_PARAMETERS ) {
+			char * value = &(_values[paramNum][0]);
 			//
-			_comma_count = 0;
+			int8_t ival = atoi(value);
+			return(ival);
+		}
+		return(0);
+	}
+	
+	int16_t unload_int16(uint8_t paramNum) {
+		if ( paramNum < MAX_CMD_PARAMETERS ) {
+			char * value = &(_values[paramNum][0]);
+			int16_t ival = atoi(value);
+			return(ival);
+		}
+		return(0);
+	}
+	
+	int32_t unload_int32(uint8_t paramNum) {
+		if ( paramNum < MAX_CMD_PARAMETERS ) {
+			char * value = &(_values[paramNum][0]);
+			int32_t ival = atol(value);
+			return(ival);
+		}
+		return(0);
+	}
+	
+	
+	double unload_float(uint8_t paramNum) {
+		if ( paramNum < MAX_CMD_PARAMETERS ) {
+			char * value = &(_values[paramNum][0]);
 			//
-			memset(_values[0],0,MAX_VALUE_LEN);
-			memset(_values[1],0,MAX_VALUE_LEN);
-			memset(_values[2],0,MAX_VALUE_LEN);
-			memset(_values[3],0,MAX_VALUE_LEN);
-			//
-			_maxCMDs = min(appMaxCmd,MAX_CMDS);
-			_cnum = 0xFF;
-			
-			// read in cmd string
-			_linesize = min(MAX_CMD_LINE,linesize);
-			reset();
+			double fval = atof(value);
+			return(fval);
 		}
-		virtual ~tinyCmdTable() {}
+		return(0.0);
+	}
 	
 	
-		uint8_t cmdNumber(void) {
-			return(_cnum);
-		}
-	
-		// ---- ---- ---- ---- ---- ---- ---- ---- ----
-		uint8_t unload_uint8(uint8_t paramNum) {
-			uint8_t ival;
-			if ( paramNum < MAX_CMD_PARAMETERS ) {
-				char * value = &(_values[paramNum][0]);
-				//
-				uint8_t ival = (uint8_t)atoi(value);
-				return(ival);
+	bool unload_bool(uint8_t paramNum) {
+		//
+		if ( paramNum < MAX_CMD_PARAMETERS ) {
+			char * value = &(_values[paramNum][0]);
+			if ( strlen(value) > 0 ) {
+				if ( strcmp(value,"true") == 0 ) return(true);
+				else if ( value[0] == '1' ) return(true);
+				else if ( strcmp(value,"on") == 0 ) return(true);
+				else if ( strcmp(value,"HIGH") == 0 ) return(true);
+				else if ( strcmp(value,"yes") == 0 ) return(true);
 			}
-			return(0);
 		}
-
-		uint16_t unload_uint16(uint8_t paramNum) {
-			if ( paramNum < MAX_CMD_PARAMETERS ) {
-				char * value = &(_values[paramNum][0]);
-				uint16_t ival = (uint16_t)atoi(value);
-				return(ival);
-			}
-			return(0);
-		}
-
-		uint32_t unload_uint32(uint8_t paramNum) {
-			if ( paramNum < MAX_CMD_PARAMETERS ) {
-				char * value = &(_values[paramNum][0]);
-				uint32_t ival = atol(value);
-				return(ival);
-			}
-			return(0);
-		}
-	
-		int8_t unload_int8(uint8_t paramNum) {
-			uint8_t ival;
-			if ( paramNum < MAX_CMD_PARAMETERS ) {
-				char * value = &(_values[paramNum][0]);
-				//
-				int8_t ival = atoi(value);
-				return(ival);
-			}
-			return(0);
-		}
-	
-		int16_t unload_int16(uint8_t paramNum) {
-			if ( paramNum < MAX_CMD_PARAMETERS ) {
-				char * value = &(_values[paramNum][0]);
-				int16_t ival = atoi(value);
-				return(ival);
-			}
-			return(0);
-		}
-	
-		int32_t unload_int32(uint8_t paramNum) {
-			if ( paramNum < MAX_CMD_PARAMETERS ) {
-				char * value = &(_values[paramNum][0]);
-				int32_t ival = atol(value);
-				return(ival);
-			}
-			return(0);
-		}
-	
-
-		double unload_float(uint8_t paramNum) {
-			if ( paramNum < MAX_CMD_PARAMETERS ) {
-				char * value = &(_values[paramNum][0]);
-				//
-				double fval = atof(value);
-				return(fval);
-			}
-			return(0.0);
-		}
-	
-
-		bool unload_bool(uint8_t paramNum) {
-			//
-			if ( paramNum < MAX_CMD_PARAMETERS ) {
-				char * value = &(_values[paramNum][0]);
-				if ( strlen(value) > 0 ) {
-					if ( strcmp(value,"true") == 0 ) return(true);
-					else if ( value[0] == '1' ) return(true);
-					else if ( strcmp(value,"on") == 0 ) return(true);
-					else if ( strcmp(value,"HIGH") == 0 ) return(true);
-					else if ( strcmp(value,"yes") == 0 ) return(true);
-				}
-			}
-			
-			return(false);
-		}
+		
+		return(false);
+	}
 	
 	
 	///
-		void addChar(char c);
+	void addChar(char c);
 	
-		bool parseCommandString(void);
-		bool ready(void) { return _ready; }
+	bool parseCommandString(void);
+	bool ready(void) { return _ready; }
 	
-		char 	* preamble(void) { return _preamble; }
-		bool 	unloadParameters(void);
+	char 	* preamble(void) { return _preamble; }
+	bool 	unloadParameters(void);
 	
+	//
+	bool reset(bool state = true) {
 		//
-		bool reset(bool state = true) {
-			//
-			_ready = false;
-			_errorSet = !state;
-			//
-			_lineindex = 0;
-			for ( uint8_t i = 0; i < MAX_CMD_LINE; i++ ) { _buffer[i] = 0; }
-			for ( uint8_t i = 0; i < MAX_CMD_PARAMETERS; i++ ) { memset(_values[i],0,MAX_VALUE_LEN); }
-			//
-		}
-	
-		bool error(void) {
-			bool inError = _errorSet;
-			_errorSet = false;
-			return(inError);
-		}
-	
-		void reportReadState(const char *tag) {
-			Serial.print("DBG=->");
-			Serial.print(tag);
-		}
-	
-		// ---- ---- ---- ---- ---- ---- ---- ----
-		uint8_t tinyCmdTable::locateCommmas(void);
-	bool tinyCmdTable::unloadCommand(void);
-	
-	
-	protected:
-	
-		bool 			_ready;
-		bool			_errorSet;
+		_ready = false;
+		_errorSet = !state;
 		//
-		uint8_t			_maxCMDs;
-		uint8_t			_cnum;
-		uint8_t			_comma_count;
+		_lineindex = 0;
+		for ( uint8_t i = 0; i < MAX_CMD_LINE; i++ ) { _buffer[i] = 0; }
+		for ( uint8_t i = 0; i < MAX_CMD_PARAMETERS; i++ ) { memset(_values[i],0,MAX_VALUE_LEN); }
 		//
-		uint8_t			_readState;
-
-		//
-		char 			_buffer[MAX_CMD_LINE];
-		uint8_t			_linesize;
-		uint8_t			_lineindex;
-		//
-		char 			_preamble[MAX_PREAMBLE_SIZE];
-		//
-		char 			_values[MAX_CMD_PARAMETERS][MAX_VALUE_LEN];
-		char 			*_commaPointer[MAX_COMMAS];  // just locate the commas in the input string...
+	}
+	
+	bool error(void) {
+		bool inError = _errorSet;
+		_errorSet = false;
+		return(inError);
+	}
+	
+	void reportReadState(const char *tag) {
+		Serial.print("DBG=->");
+		Serial.print(tag);
+	}
+	
+	// ---- ---- ---- ---- ---- ---- ---- ----
+	uint8_t locateCommmas(void);
+	bool unloadCommand(void);
+	
+	
+protected:
+	
+	bool 			_ready;
+	bool			_errorSet;
+	//
+	uint8_t			_maxCMDs;
+	uint8_t			_cnum;
+	uint8_t			_comma_count;
+	//
+	uint8_t			_readState;
+	
+	//
+	char 			_buffer[MAX_CMD_LINE];
+	uint8_t			_linesize;
+	uint8_t			_lineindex;
+	//
+	char 			_preamble[MAX_PREAMBLE_SIZE];
+	//
+	char 			_values[MAX_CMD_PARAMETERS][MAX_VALUE_LEN];
+	char 			*_commaPointer[MAX_COMMAS];  // just locate the commas in the input string...
 };
 
 

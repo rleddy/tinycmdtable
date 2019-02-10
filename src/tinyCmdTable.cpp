@@ -3,7 +3,7 @@
 
 
 void tinyCmdTable::addChar(char c) {
-
+	
 	if ( c == '\n' ) {
 		_buffer[_lineindex++] = 0;
 		//
@@ -46,7 +46,7 @@ bool tinyCmdTable::unloadCommand(void) {
 		_cnum = 0xFF;
 		return(false);
 	}
-
+	
 	return(true);
 }
 
@@ -58,7 +58,7 @@ bool tinyCmdTable::unloadParameters(void) {
 		char *val = _commaPointer[i];
 		//
 		if ( val != NULL ) {
-			strcpy(_values[i],val);
+			strcpy(_values[i-2],val);
 		} else {
 			reset();  // failed to parse
 			return(false);
