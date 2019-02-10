@@ -1,0 +1,86 @@
+
+#define QUERY_STATE_ 0
+#define LIMIT_ 1
+#define SET_TIME_ 2
+#define TOGGLE_READ_SENSORS_ 3
+#define LAMP_ 4
+#define PUMP_ 5
+#define HEATER_ 6
+#define STEPPER_ 7
+
+
+#define SENSOR_ALL_ 0
+#define SENSOR_OD_ 1
+#define SENSOR_Temperature_ 2
+
+
+
+void handleStateRequest(uint8_t psensor) {
+ // ${TO DO}
+}
+void handleLimit(uint8_t psensor,float pHIGH,float pLOW) {
+ // ${TO DO}
+}
+void appSetTime(uint16_t pminutes,uint8_t pday,uint8_t pmonth,uint8_t pyear) {
+ // ${TO DO}
+}
+void handleReportCmd(bool pstate,uint16_t pinterval,uint8_t psensor) {
+ // ${TO DO}
+}
+void handleLedsCmd(bool pstate,uint8_t plevel,uint16_t pstart,uint16_t pstop) {
+ // ${TO DO}
+}
+void handlePumpCmd(bool pdirection,uint8_t plevel,uint16_t pstart,uint16_t pstop) {
+ // ${TO DO}
+}
+void handleHeatCmd(bool pstate,uint8_t plevel) {
+ // ${TO DO}
+}
+void handleStepperCmd(bool pdirection,uint8_t plevel,uint16_t psteps) {
+ // ${TO DO}
+}
+
+
+
+
+void commandProcessor() {
+
+  uint8_t cmdNum = cmdTable.cmdNumber();
+  
+	switch( cmdNum ) {
+		case QUERY_STATE_: {
+			handleStateRequest(cmdTable.unload_uint8(0));
+			break;
+		}
+		case LIMIT_: {
+			handleLimit(cmdTable.unload_uint8(0),cmdTable.unload_float(1),cmdTable.unload_float(2));
+			break;
+		}
+		case SET_TIME_: {
+			appSetTime(cmdTable.unload_uint16(0),cmdTable.unload_uint8(1),cmdTable.unload_uint8(2),cmdTable.unload_uint8(3));
+			break;
+		}
+		case TOGGLE_READ_SENSORS_: {
+			handleReportCmd(cmdTable.unload_bool(0),cmdTable.unload_uint16(1),cmdTable.unload_uint8(2));
+			break;
+		}
+		case LAMP_: {
+			handleLedsCmd(cmdTable.unload_bool(0),cmdTable.unload_uint8(1),cmdTable.unload_uint16(2),cmdTable.unload_uint16(3));
+			break;
+		}
+		case PUMP_: {
+			handlePumpCmd(cmdTable.unload_bool(0),cmdTable.unload_uint8(1),cmdTable.unload_uint16(2),cmdTable.unload_uint16(3));
+			break;
+		}
+		case HEATER_: {
+			handleHeatCmd(cmdTable.unload_bool(0),cmdTable.unload_uint8(1));
+			break;
+		}
+		case STEPPER_: {
+			handleStepperCmd(cmdTable.unload_bool(0),cmdTable.unload_uint8(1),cmdTable.unload_uint16(2));
+			break;
+		}
+	}
+  cmdTable.reset();
+}
+        

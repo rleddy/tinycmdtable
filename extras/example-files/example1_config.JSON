@@ -1,0 +1,87 @@
+{
+	"commands" : {
+		"query-state" : {
+			"parameters" : [ "query" ],
+			"description" : "Request the state of the MCU",
+			"sketchHandler" : "handleStateRequest(uint8_t sensor)"
+		},
+		"limit" : {
+			"parameters" : [ "sensor", "HIGH", "LOW" ],
+			"description" : "Enter a sensor limit for triggering",
+			"sketchHandler" : "handleLimit(uint8_t sensor, float HIGH, float LOW)"
+		},
+		"set-time" : {
+			"parameters" : [ "minutes", "day", "month", "year" ],
+			"description" : "Sets the time of the MCU as per application requirements",
+			"sketchHandler" : "appSetTime(uint16_t minutes, uint8_t day, uint8_t month, uint8_t year)"
+		},
+		"toggle-read-sensors" : {
+			"parameters" : [ "sate", "interval", "sensor" ],
+			"description" : "sensor read on off ",
+			"sketchHandler" : "handleReportCmd(bool state, uint16_t interval, uint8_t sensor)"
+		},
+		"lamp" : {
+			"parameters" : [ "state", "level", "start", "stop" ],
+			"description" : "Turn a lamp on or off",
+			"sketchHandler" : "handleLedsCmd(bool state, uint8_t level, uint16_t start, uint16_t stop)"
+		},
+		"pump" : {
+			"parameters" : [ "direction", "level", "start", "stop" ],
+			"description" : "Set a pump speed and direction",
+			"sketchHandler" : "handlePumpCmd(bool direction, uint8_t level, uint16_t start, uint16_t stop)"
+		},
+		"heater" : {
+			"parameters" : [ "state", "level" ],
+			"description" : "Turn a heater on or off at a level",
+			"sketchHandler" : "handleHeatCmd(bool state, uint8_t level)"
+		},
+		"stepper" : {
+			"parameters" : [ "direction", "level", "steps" ],
+			"description" : "Run a stepper at some given rate",
+			"sketchHandler" : "handleStepperCmd(bool direction, uint8_t level, uint16_t steps)"
+		}
+	},
+
+	"value-management" : {
+		"level" : { "in" : "percent", "out" : "conv-percent", "max" : 255 },
+		"query" : { "in" : "", "out" : "sensorMap" },
+		"sensor" : { "in" : "", "out" : "sensorMap" },
+		"hours" : { "in" : "hours" },
+		"minutes" : { "in" : "now", "out" : "conv-now-minutes" },
+		"day" : { "in" : "now", "out" : "conv-now-day" },
+		"month" : { "in" : "now", "out" : "conv-now-month" },
+		"year" : { "in" : "now", "out" : "conv-now-year" }
+	},
+
+	"value-conversions" : {
+		"hours" : [ "(h) => { return(h*60); }", "+,minutes" ],
+		"now-minutes" : [ "(h) => { return((new Date()).getMinutes()); }" ],
+		"now-day" : [ "(h) => { return((new Date()).getDay()); }" ],
+		"now-month" : [ "(h) => { return((new Date()).getMonth()); }" ],
+		"now-year" : [ "(h) => { return((new Date()).getYear() - 100 + 2000); }" ],
+		"percent" : [ "(v) => { return(v*2.55); }", "level" ],
+		"farenheit" : [ "(v) => { return((v-32)*5.0/9.0); }", "celsuis" ]
+	},
+
+	"value-map" : {
+    		"state" : {
+        		"yes" : 1,
+        		"no" : 0,
+        		"on" : 1,
+        		"off" : 0,
+        		"true" : 1,
+        		"false" : 0
+    		},
+    		"direction" : {
+        		"forwards" : 1,
+        		"backwards" : 0
+    		}
+
+	},
+
+	"sensors" : [
+		"ALL", "OD", "Temperature"
+	]
+
+}
+

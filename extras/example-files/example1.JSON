@@ -1,0 +1,90 @@
+{
+	"script" : [
+			  {
+				  "cmd" : "query-state",
+				  "parameters" : {
+					  "query" : "ALL"
+				  }
+			  },
+			  
+			  {
+				  "cmd" : "limit",
+				  "parameters" : {
+					  "sensor" : "Temperature",
+					  "LOW" : 20.0,
+					  "HIGH" : 70.0
+				  }
+			  },
+			  
+			  {
+				  "cmd" : "set-time",
+				  "parameters" : {
+					  "minutes" : "30",
+					  "hours" : "10",
+					  "day" : "now",
+					  "month" : "now",
+					  "year" : "now"
+				  }
+			  },
+			  
+			  {
+				  "cmd" : "toggle-read-sensors",
+				  "parameters" : {
+					  "state" : "ON",
+					  "interval" : "10"
+				  }
+			  },
+			  
+			  {
+				  "cmd" : "lamp",
+				  "parameters" : {
+					  "state" : "ON",
+					  "level" : "10",
+					  "start" : "0",
+					  "stop" : "0"
+				  }
+			  },
+			  
+			  {
+				  "cmd" : "pump",
+				  "parameters" : {
+					  "direction" : "forwards",
+					  "level" : "70",
+					  "start" : "0",
+					  "stop" : "0"
+				  }
+			  },
+			  
+			  {
+				  "cmd" : "heater",
+				  "parameters" : {
+					  "state" : "ON",
+					  "level" : "50"
+				  }
+			  }
+			  ],
+	
+	"uarts" : [{
+				   "port" : "/dev/ttyUSB0",
+				   "baud" : 9600,
+				   "mcu" : "test1"
+			   },
+			   {
+				   "port" : "/dev/cu.wchusbserial14140",
+				   "baud" : 9600,
+				   "mcu" : "test2"
+			   },
+			   {
+				   "port" : "/dev/cu.wchusbserial14110",
+				   "baud" : 9600,
+				   "mcu" : "test3"
+			   },
+			   {
+				   "port" : "/dev/cu.wchusbserial14130",
+				   "baud" : 9600,
+				   "mcu" : "test4"
+			   }]
+}
+
+
+
